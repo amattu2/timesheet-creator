@@ -24,7 +24,7 @@ import { FormSchema } from "@/schemas/form";
 const WORK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export const TimesheetForm = () => {
-  const { control } = useFormContext<FormSchema>();
+  const { control, watch } = useFormContext<FormSchema>();
 
   const {
     fields: eventFields,
@@ -34,6 +34,18 @@ export const TimesheetForm = () => {
     control,
     name: "events",
   });
+
+  const addEvent = () => {
+    // Add event on the first day of the month if no events exist
+    const lastEvent = eventFields[eventFields.length - 1];
+    if (!lastEvent || lastEvent.date.add(1, "day").month() !== dayjs(watch("monthYear")).month()) {
+      appendEvent({ date: dayjs(watch("monthYear")).startOf("month"), description: "" });
+      return;
+    }
+
+    // Add event the day after the last event
+    appendEvent({ date: lastEvent.date.add(1, "day"), description: "" });
+  };
 
   const {
     fields: employeeFields,
@@ -52,7 +64,7 @@ export const TimesheetForm = () => {
           <Typography variant="h6" mb={1}>
             Timesheet Period
           </Typography>
-          <Typography variant="body2" color="textSecondary" mb={2}>
+          <Typography variant="body2" color="text.secondary" mb={2}>
             Select the month and year for this timesheet
           </Typography>
           <Controller
@@ -84,7 +96,7 @@ export const TimesheetForm = () => {
           <Typography variant="h6" mb={1}>
             Employees
           </Typography>
-          <Typography variant="body2" color="textSecondary" mb={2}>
+          <Typography variant="body2" color="text.secondary" mb={2}>
             Provide the full names of employees to generate individual timesheets for.
           </Typography>
           <Stack spacing={2} mb={2}>
@@ -129,7 +141,7 @@ export const TimesheetForm = () => {
           <Typography variant="h6" mb={1}>
             Working Days
           </Typography>
-          <Typography variant="body2" color="textSecondary" mb={2}>
+          <Typography variant="body2" color="text.secondary" mb={2}>
             Select which days of the week allow billable hours to be entered.
           </Typography>
           <Controller
@@ -166,7 +178,7 @@ export const TimesheetForm = () => {
           <Typography variant="h6" mb={1}>
             Events
           </Typography>
-          <Typography variant="body2" color="textSecondary" mb={2}>
+          <Typography variant="body2" color="text.secondary" mb={2}>
             Add custom events to this timesheet (e.g., holidays, closures, etc).
           </Typography>
           <Stack spacing={2} mb={2}>
@@ -206,12 +218,7 @@ export const TimesheetForm = () => {
               </Box>
             ))}
           </Stack>
-          <Button
-            startIcon={<AddIcon />}
-            onClick={() => appendEvent({ date: dayjs(), description: "" })}
-            variant="outlined"
-            size="small"
-          >
+          <Button startIcon={<AddIcon />} onClick={addEvent} variant="outlined" size="small">
             Add Event
           </Button>
         </Box>
