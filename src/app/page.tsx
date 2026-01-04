@@ -8,32 +8,47 @@ import { Box, Grid } from "@mui/material";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { useLocalStorage } from 'usehooks-ts'
+
+const DefaultForm: FormSchema = {
+    monthYear: dayjs(),
+    workDays: {
+      Monday: true,
+      Tuesday: true,
+      Wednesday: true,
+      Thursday: true,
+      Friday: true,
+      Saturday: true,
+      Sunday: false,
+    },
+    events: [],
+    employees: [{ fullName: "" }],
+  }
+
+const CachedForm: Pick<FormSchema, "workDays" | "employees"> = {
+  workDays: DefaultForm.workDays,
+  employees: DefaultForm.employees,
+}
 
 const Page = () => {
+  const [prevForm, setPrevForm] = useLocalStorage<typeof CachedForm>('previous-form', CachedForm)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const methods = useForm<FormSchema>({
     resolver: zodResolver(FORM_SCHEMA),
     defaultValues: {
-      // TODO: Load from local storage or defaults
-      monthYear: dayjs(),
-      workDays: {
-        Monday: true,
-        Tuesday: true,
-        Wednesday: true,
-        Thursday: true,
-        Friday: true,
-        Saturday: true,
-        Sunday: false,
-      },
-      events: [],
-      employees: [{ fullName: "" }],
+      ...DefaultForm,
+      ...prevForm,
     },
   });
 
   const onSubmit = (data: FormSchema) => {
     const pdfDataUrl = generateTimesheetPDF(data);
     setPdfUrl(pdfDataUrl);
+    setPrevForm({
+      workDays: data.workDays,
+      employees: data.employees,
+    });
   };
 
   return (
