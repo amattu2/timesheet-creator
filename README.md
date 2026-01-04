@@ -1,5 +1,9 @@
 # Introduction
 
+[![Vitest](https://github.com/amattu2/timesheet-creator/actions/workflows/test.yml/badge.svg)](https://github.com/amattu2/timesheet-creator/actions/workflows/test.yml)
+[![TypeScript](https://github.com/amattu2/timesheet-creator/actions/workflows/typescript.yml/badge.svg)](https://github.com/amattu2/timesheet-creator/actions/workflows/typescript.yml)
+[![ESLint](https://github.com/amattu2/timesheet-creator/actions/workflows/lint.yml/badge.svg)](https://github.com/amattu2/timesheet-creator/actions/workflows/lint.yml)
+
 This is a lightweight Payroll Timesheet generator using Next.js, Material UI,
 and JsPDF. Generate professional timesheets in minutes and streamline your time
 tracking workflow.
@@ -40,4 +44,7 @@ npm run dev
 
 # Previews
 
-TBD
+<img width="1904" height="912" alt="Full Page" src="https://github.com/user-attachments/assets/e4d85fd9-5c7c-46cd-aed6-76fba78e05d1" />
+
+<img width="947" height="843" alt="Timesheet" src="https://github.com/user-attachments/assets/ecb9d07d-dc36-46c9-b048-6e111c3a9fa1" />
+
