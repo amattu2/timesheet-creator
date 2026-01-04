@@ -7,8 +7,8 @@ import { Footer } from "@/components/footer";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
-  title: "Timesheet Creator",
-  description: "An app to create payroll timesheets easily",
+  title: process.env.NEXT_PUBLIC_APP_NAME,
+  description: process.env.APP_DESCRIPTION,
 };
 
 type RootProps = {

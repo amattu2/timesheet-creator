@@ -5,8 +5,6 @@ import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
 dayjs.extend(isSameOrBefore);
 
-const APP_NAME_PLACEHOLDER = "Timesheet Creator"; // TODO: Env variable or config
-
 type DayRow = {
   /**
    * The date of the specific row
@@ -58,7 +56,7 @@ const buildWeeks = (
       isBillable: event ? false : workDays[weekDay],
     });
 
-    const isEndOfWeek = date.day() === 0; // Sunday ends the week
+    const isEndOfWeek = date.day() === 0;
     if (isEndOfWeek && currentWeek.length) {
       weeks.push({ days: currentWeek });
       currentWeek = [];
@@ -144,9 +142,9 @@ export const generateTimesheetPDF = (data: FormSchema): string => {
   doc.setProperties({
     title: `${monthLabel} Timesheet`,
     subject: `Timesheet export for pay period ${monthLabel}`,
-    author: APP_NAME_PLACEHOLDER,
-    creator: APP_NAME_PLACEHOLDER,
-    keywords: `PDF, Confidential, Employee Timesheet, ${APP_NAME_PLACEHOLDER}`,
+    author: process.env.NEXT_PUBLIC_COMPANY_NAME,
+    creator: process.env.NEXT_PUBLIC_APP_NAME,
+    keywords: `PDF, Confidential, Employee Timesheet, ${process.env.NEXT_PUBLIC_APP_NAME} for ${process.env.NEXT_PUBLIC_COMPANY_NAME}`,
   });
 
   const weeks = buildWeeks(data.monthYear, data.workDays, data.events);
@@ -162,7 +160,7 @@ export const generateTimesheetPDF = (data: FormSchema): string => {
     // Header
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(15);
-    doc.text(APP_NAME_PLACEHOLDER, 10, y);
+    doc.text(process.env.NEXT_PUBLIC_COMPANY_NAME || "", 10, y);
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(15);
     doc.text(`Timesheet | ${monthLabel}`, doc.internal.pageSize.getWidth() - 10, y, {
