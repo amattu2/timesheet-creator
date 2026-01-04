@@ -11,12 +11,12 @@ const StyledFooter = styled("footer")(({ theme }) => ({
 }));
 
 export const Footer = () => (
-  <StyledFooter>
+  <StyledFooter data-testid="page-footer">
     <Container maxWidth="lg">
       <Typography variant="body2">
         {"Copyright © "}
-        <Link href="https://github.com/amattu2">{process.env.NEXT_PUBLIC_APP_NAME}</Link>{" "}
-        {new Date().getFullYear()}
+        <Link href="https://github.com/amattu2" data-testid="footer-link">{process.env.NEXT_PUBLIC_APP_NAME}</Link>{" "}
+        <span data-testid="footer-year">{new Date().getFullYear()}</span>
       </Typography>
     </Container>
   </StyledFooter>

@@ -37,7 +37,7 @@ type IframeProps = {
 export const IframeWrapper = ({ src, ...props }: IframeProps) => {
   if (!src) {
     return (
-      <StyledPlaceholder>
+      <StyledPlaceholder data-testid="iframe-placeholder">
         <Typography variant="body1" color="text.secondary">
           No content available
         </Typography>
@@ -45,5 +45,5 @@ export const IframeWrapper = ({ src, ...props }: IframeProps) => {
     );
   }
 
-  return <StyledIframe src={src} {...props} />;
+  return <StyledIframe src={src} {...props} data-testid="iframe" />;
 };
