@@ -38,18 +38,18 @@ export const TimesheetForm = () => {
         Saturday: false,
         Sunday: false,
       },
-      holidays: [],
+      events: [],
       employees: [{ fullName: "" }],
     },
   });
 
   const {
-    fields: holidayFields,
-    append: appendHoliday,
-    remove: removeHoliday,
+    fields: eventFields,
+    append: appendEvent,
+    remove: removeEvent,
   } = useFieldArray({
     control,
-    name: "holidays",
+    name: "events",
   });
 
   const {
@@ -79,13 +79,13 @@ export const TimesheetForm = () => {
           <Controller
             name="monthYear"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <DatePicker
                 {...field}
                 value={field.value ? field.value.toDate() : null}
                 onChange={(date) => field.onChange(date ? dayjs(date) : null)}
                 views={["year", "month"]}
-                slotProps={{ textField: { fullWidth: true, size: "small" } }}
+                slotProps={{ textField: { fullWidth: true, size: "small", error: !!error, helperText: error?.message } }}
               />
             )}
           />
@@ -99,7 +99,7 @@ export const TimesheetForm = () => {
             Employees
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={2}>
-            Enter employee names (at least one required)
+            Provide the full names of employees to generate individual timesheets for. 
           </Typography>
           <Stack spacing={2} mb={2}>
             {employeeFields.map((field, index) => (
@@ -144,7 +144,7 @@ export const TimesheetForm = () => {
             Working Days
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={2}>
-            Select which days of the week are working days
+            Select which days of the week allow billable hours to be entered.
           </Typography>
           <Controller
             name="workDays"
@@ -175,30 +175,44 @@ export const TimesheetForm = () => {
 
         <Divider sx={{ my: 3 }} />
 
-        {/* Holidays Section */}
+        {/* Events Section */}
         <Box mb={4}>
           <Typography variant="h6" mb={1}>
-            Holidays
+            Events
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={2}>
-            Add holidays observed in this month (optional)
+            Add custom events to this timesheet (e.g., holidays, closures, etc).
           </Typography>
           <Stack spacing={2} mb={2}>
-            {holidayFields.map((field, index) => (
+            {eventFields.map((field, index) => (
               <Box key={field.id} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
                 <Controller
-                  name={`holidays.${index}`}
+                  name={`events.${index}.date`}
                   control={control}
-                  render={({ field }) => (
+                  render={({ field, fieldState: { error } }) => (
                     <DatePicker
                       {...field}
-                      value={field.value ? field.value.toDate() : null} // Convert Dayjs to Date
-                      onChange={(date) => field.onChange(date ? dayjs(date) : null)} // Convert Date back to Dayjs
-                      slotProps={{ textField: { fullWidth: true, size: "small" } }}
+                      value={field.value ? field.value.toDate() : null} 
+                      onChange={(date) => field.onChange(date ? dayjs(date) : null)}
+                      slotProps={{ textField: { size: "small", error: !!error, helperText: error?.message } }}
                     />
                   )}
                 />
-                <IconButton color="error" size="small" onClick={() => removeHoliday(index)}>
+                <Controller
+                  name={`events.${index}.description`}
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <TextField
+                      {...field}
+                      placeholder="Description (optional)"
+                      fullWidth
+                      size="small"
+                      error={!!error}
+                      helperText={error?.message}
+                    />
+                  )}
+                />                
+                <IconButton color="error" size="small" onClick={() => removeEvent(index)}>
                   <DeleteIcon />
                 </IconButton>
               </Box>
@@ -206,11 +220,11 @@ export const TimesheetForm = () => {
           </Stack>
           <Button
             startIcon={<AddIcon />}
-            onClick={() => appendHoliday(dayjs())}
+            onClick={() => appendEvent({ date: dayjs(), description: "" })}
             variant="outlined"
             size="small"
           >
-            Add Holiday
+            Add Event
           </Button>
         </Box>
 

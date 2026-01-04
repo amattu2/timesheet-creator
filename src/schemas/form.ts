@@ -2,7 +2,7 @@ import { Dayjs } from "dayjs";
 import z from "zod";
 
 export const FORM_SCHEMA = z.object({
-  monthYear: z.custom<Dayjs>().refine((date) => date !== null, "Month/Year is required"),
+  monthYear: z.custom<Dayjs>().refine((date) => date !== null && date.isValid(), "Timesheet period is required"),
   workDays: z.object({
     Monday: z.boolean(),
     Tuesday: z.boolean(),
@@ -12,7 +12,10 @@ export const FORM_SCHEMA = z.object({
     Saturday: z.boolean(),
     Sunday: z.boolean(),
   }),
-  holidays: z.array(z.custom<Dayjs>()).default([]).optional(),
+  events: z.array(z.object({
+    date: z.custom<Dayjs>().refine((date) => date !== null && date.isValid(), "Event date is required"),
+    description: z.string().max(100, { message: "Description must be at most 100 characters" }).default("").optional(),
+  })).default([]).optional(),
   employees: z
     .array(
       z.object({
