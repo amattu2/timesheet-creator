@@ -1,7 +1,6 @@
 "use client";
 
-import { useForm, Controller, useFieldArray } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import {
   Box,
   Button,
@@ -20,28 +19,12 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
-import { FORM_SCHEMA, FormSchema } from "@/schemas/form";
+import { FormSchema } from "@/schemas/form";
 
 const WORK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export const TimesheetForm = () => {
-  const { control, handleSubmit } = useForm<FormSchema>({
-    resolver: zodResolver(FORM_SCHEMA),
-    defaultValues: {
-      monthYear: dayjs(),
-      workDays: {
-        Monday: true,
-        Tuesday: true,
-        Wednesday: true,
-        Thursday: true,
-        Friday: true,
-        Saturday: false,
-        Sunday: false,
-      },
-      events: [],
-      employees: [{ fullName: "" }],
-    },
-  });
+  const { control } = useFormContext<FormSchema>();
 
   const {
     fields: eventFields,
@@ -61,13 +44,9 @@ export const TimesheetForm = () => {
     name: "employees",
   });
 
-  const onSubmit = (data: FormSchema) => {
-    console.log("Form Data:", data);
-  };
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ p: 3 }}>
+      <Box sx={{ p: 3 }}>
         {/* Month/Year Section */}
         <Box mb={4}>
           <Typography variant="h6" mb={1}>
@@ -85,7 +64,14 @@ export const TimesheetForm = () => {
                 value={field.value ? field.value.toDate() : null}
                 onChange={(date) => field.onChange(date ? dayjs(date) : null)}
                 views={["year", "month"]}
-                slotProps={{ textField: { fullWidth: true, size: "small", error: !!error, helperText: error?.message } }}
+                slotProps={{
+                  textField: {
+                    fullWidth: true,
+                    size: "small",
+                    error: !!error,
+                    helperText: error?.message,
+                  },
+                }}
               />
             )}
           />
@@ -99,7 +85,7 @@ export const TimesheetForm = () => {
             Employees
           </Typography>
           <Typography variant="body2" color="textSecondary" mb={2}>
-            Provide the full names of employees to generate individual timesheets for. 
+            Provide the full names of employees to generate individual timesheets for.
           </Typography>
           <Stack spacing={2} mb={2}>
             {employeeFields.map((field, index) => (
@@ -192,9 +178,11 @@ export const TimesheetForm = () => {
                   render={({ field, fieldState: { error } }) => (
                     <DatePicker
                       {...field}
-                      value={field.value ? field.value.toDate() : null} 
+                      value={field.value ? field.value.toDate() : null}
                       onChange={(date) => field.onChange(date ? dayjs(date) : null)}
-                      slotProps={{ textField: { size: "small", error: !!error, helperText: error?.message } }}
+                      slotProps={{
+                        textField: { size: "small", error: !!error, helperText: error?.message },
+                      }}
                     />
                   )}
                 />
@@ -211,7 +199,7 @@ export const TimesheetForm = () => {
                       helperText={error?.message}
                     />
                   )}
-                />                
+                />
                 <IconButton color="error" size="small" onClick={() => removeEvent(index)}>
                   <DeleteIcon />
                 </IconButton>

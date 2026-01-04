@@ -1,25 +1,52 @@
+"use client";
+
 import { TimesheetForm } from "@/components/form";
+import { FormSchema, FORM_SCHEMA } from "@/schemas/form";
 import { generateTimesheetPDF } from "@/utils/pdf";
-import { Grid } from "@mui/material";
-import { Suspense, useMemo } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Box, Grid } from "@mui/material";
+import dayjs from "dayjs";
+import { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 
 const Page = () => {
-  const pdfUrl = useMemo(() => generateTimesheetPDF(), []);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+
+  const methods = useForm<FormSchema>({
+    resolver: zodResolver(FORM_SCHEMA),
+    defaultValues: {
+      // TODO: Load from local storage or defaults
+      monthYear: dayjs(),
+      workDays: {
+        Monday: true,
+        Tuesday: true,
+        Wednesday: true,
+        Thursday: true,
+        Friday: true,
+        Saturday: true,
+        Sunday: false,
+      },
+      events: [],
+      employees: [{ fullName: "" }],
+    },
+  });
+
+  const onSubmit = (data: FormSchema) => {
+    const pdfDataUrl = generateTimesheetPDF(data);
+    setPdfUrl(pdfDataUrl);
+  };
 
   return (
     <Grid container>
       <Grid size={{ lg: 6, xs: 12 }}>
-        <Suspense>
-          <TimesheetForm />
-        </Suspense>
+        <FormProvider {...methods}>
+          <Box component="form" onSubmit={methods.handleSubmit(onSubmit)} sx={{ p: 3 }}>
+            <TimesheetForm />
+          </Box>
+        </FormProvider>
       </Grid>
-      {/* <Grid size={{ lg: 1, xs: 0 }}>
-      <Divider orientation="vertical" flexItem>
-        {" -> "}
-      </Divider>
-      </Grid> */}
       <Grid size={{ lg: 6, xs: 12 }}>
-        <iframe src={pdfUrl} width="600px" height="600px"></iframe>
+        {pdfUrl && <iframe src={pdfUrl} width="100%" height="100%" />}
       </Grid>
     </Grid>
   );
