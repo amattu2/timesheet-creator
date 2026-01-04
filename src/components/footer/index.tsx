@@ -15,7 +15,8 @@ export const Footer = () => (
     <Container maxWidth="lg">
       <Typography variant="body2">
         {"Copyright © "}
-        <Link href="https://github.com/">Timesheet Creator</Link> {new Date().getFullYear()}
+        <Link href="https://github.com/amattu2">{process.env.NEXT_PUBLIC_APP_NAME}</Link>{" "}
+        {new Date().getFullYear()}
       </Typography>
     </Container>
   </StyledFooter>
