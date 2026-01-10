@@ -6,7 +6,7 @@ const BaseStyling: CSSProperties = {
   borderRadius: "6px",
   minHeight: "calc(100vh - 68.5px - 20px)",
   position: "sticky",
-  top: 10,
+  top: "10px",
   width: "calc(100% - 20px)",
   margin: "10px",
 };
@@ -25,6 +25,11 @@ const StyledPlaceholder = styled("div")(({ theme }) => ({
   boxShadow: theme.shadows[3],
 }));
 
+const StyledTypography = styled(Typography)(({ theme }) => ({
+  color: theme.palette.getContrastText(theme.palette.grey[900]),
+  userSelect: "none",
+}));
+
 type IframeProps = {
   src: string | null;
 } & Omit<React.IframeHTMLAttributes<HTMLIFrameElement>, "src">;
@@ -38,9 +43,7 @@ export const IframeWrapper = ({ src, ...props }: IframeProps) => {
   if (!src) {
     return (
       <StyledPlaceholder data-testid="iframe-placeholder">
-        <Typography variant="body1" color="text.secondary">
-          No content available
-        </Typography>
+        <StyledTypography variant="body1">No content available</StyledTypography>
       </StyledPlaceholder>
     );
   }
