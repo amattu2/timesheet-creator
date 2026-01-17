@@ -23,7 +23,7 @@ export const FORM_SCHEMA = z.object({
           .refine((date) => date !== null && date.isValid(), "Event date is required"),
         description: z
           .string()
-          .max(100, { message: "Description must be at most 100 characters" })
+          .max(35, "Maximum of 35 characters allowed")
           .default("")
           .optional(),
       })
