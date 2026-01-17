@@ -33,7 +33,10 @@ export const FORM_SCHEMA = z.object({
   employees: z
     .array(
       z.object({
-        fullName: z.string().min(1, "Employee name is required"),
+        fullName: z
+          .string()
+          .min(1, "Employee name is required")
+          .max(50, "Maximum of 50 characters allowed"),
       })
     )
     .min(1, "At least one employee is required"),
