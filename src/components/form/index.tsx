@@ -1,6 +1,6 @@
 "use client";
 
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { Controller, useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import {
   Box,
   Button,
@@ -22,20 +22,16 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs, { Dayjs } from "dayjs";
 import { FormSchema } from "@/schemas/form";
-import { useMemo } from "react";
 
 const WORK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export const TimesheetForm = () => {
   const { control, watch } = useFormContext<FormSchema>();
 
-  const monthYearDate = useMemo<Dayjs | null>(() => {
-    if (!watch("monthYear") || !watch("monthYear").isValid()) {
-      return null;
-    }
-
-    return watch("monthYear");
-  }, [watch("monthYear")]);
+  const monthYearDate = useWatch({
+    name: "monthYear",
+    compute: (data: Dayjs) => (data && data?.isValid() ? data : null),
+  });
 
   const {
     fields: eventFields,
