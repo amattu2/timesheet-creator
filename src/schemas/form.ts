@@ -5,15 +5,19 @@ export const FORM_SCHEMA = z.object({
   monthYear: z
     .custom<Dayjs>()
     .refine((date) => date !== null && date.isValid(), "Timesheet period is required"),
-  workDays: z.object({
-    Monday: z.boolean(),
-    Tuesday: z.boolean(),
-    Wednesday: z.boolean(),
-    Thursday: z.boolean(),
-    Friday: z.boolean(),
-    Saturday: z.boolean(),
-    Sunday: z.boolean(),
-  }),
+  workDays: z
+    .object({
+      Monday: z.boolean(),
+      Tuesday: z.boolean(),
+      Wednesday: z.boolean(),
+      Thursday: z.boolean(),
+      Friday: z.boolean(),
+      Saturday: z.boolean(),
+      Sunday: z.boolean(),
+    })
+    .refine((workDays) => Object.values(workDays).some((day) => day), {
+      message: "At least one workday must be selected",
+    }),
   events: z
     .array(
       z.object({
@@ -21,11 +25,7 @@ export const FORM_SCHEMA = z.object({
           .custom<Dayjs>()
           // TODO: event must be within the selected monthYear
           .refine((date) => date !== null && date.isValid(), "Event date is required"),
-        description: z
-          .string()
-          .max(35, "Maximum of 35 characters allowed")
-          .default("")
-          .optional(),
+        description: z.string().max(35, "Maximum of 35 characters allowed").default("").optional(),
       })
     )
     .default([])

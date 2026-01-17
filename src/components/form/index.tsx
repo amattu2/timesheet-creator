@@ -12,6 +12,8 @@ import {
   TextField,
   Typography,
   IconButton,
+  FormControl,
+  FormHelperText,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -147,26 +149,29 @@ export const TimesheetForm = () => {
           <Controller
             name="workDays"
             control={control}
-            render={({ field }) => (
-              <FormGroup>
-                {WORK_DAYS.map((day) => (
-                  <FormControlLabel
-                    key={day}
-                    control={
-                      <Checkbox
-                        checked={field.value[day as keyof typeof field.value]}
-                        onChange={(e) =>
-                          field.onChange({
-                            ...field.value,
-                            [day]: e.target.checked,
-                          })
-                        }
-                      />
-                    }
-                    label={day}
-                  />
-                ))}
-              </FormGroup>
+            render={({ field, fieldState: { error } }) => (
+              <FormControl error={!!error} component="fieldset" variant="standard">
+                <FormGroup>
+                  {WORK_DAYS.map((day) => (
+                    <FormControlLabel
+                      key={day}
+                      control={
+                        <Checkbox
+                          checked={field.value[day as keyof typeof field.value]}
+                          onChange={(e) =>
+                            field.onChange({
+                              ...field.value,
+                              [day]: e.target.checked,
+                            })
+                          }
+                        />
+                      }
+                      label={day}
+                    />
+                  ))}
+                </FormGroup>
+                {!!error && <FormHelperText>{error?.message}</FormHelperText>}
+              </FormControl>
             )}
           />
         </Box>
