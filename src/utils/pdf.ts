@@ -163,7 +163,7 @@ export const generateTimesheetPDF = (data: FormSchema): string => {
     doc.text(process.env.NEXT_PUBLIC_COMPANY_NAME || "", 10, y);
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(15);
-    doc.text(`Timesheet | ${monthLabel}`, doc.internal.pageSize.getWidth() - 10, y, {
+    doc.text("Monthly Timesheet", doc.internal.pageSize.getWidth() - 10, y, {
       align: "right",
     });
 
