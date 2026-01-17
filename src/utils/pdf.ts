@@ -188,19 +188,19 @@ export const generateTimesheetPDF = (data: FormSchema): string => {
     // Table header
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(9);
-    const headers: Array<{ label: string; width: number; align?: "L" | "C" | "R" }> = [
-      { label: "Date", width: colWidth * 0.5, align: "C" },
-      { label: "Day of Week", width: colWidth * 0.8, align: "L" },
-      { label: "Work or Description", width: colWidth * 2.5, align: "C" },
-      { label: "Time In", width: colWidth * 0.7, align: "C" },
-      { label: "Time Out", width: colWidth * 0.7, align: "C" },
-      { label: `Net Days`, width: colWidth * 0.8, align: "C" },
+    const headers: Array<{ label: string; width: number }> = [
+      { label: "Date", width: colWidth * 0.5 },
+      { label: "Day of Week", width: colWidth * 0.8 },
+      { label: "Work or Description", width: colWidth * 2.5 },
+      { label: "Time In", width: colWidth * 0.7 },
+      { label: "Time Out", width: colWidth * 0.7 },
+      { label: `Net Days`, width: colWidth * 0.8 },
     ];
 
     let x = 10;
     headers.forEach((h) => {
       drawCell(doc, x, y + headerHeights.tableHeader, h.width, headerHeights.tableHeader, h.label, {
-        align: h.align,
+        align: "C",
         fill: true,
         fontStyle: "bold",
       });
