@@ -20,13 +20,22 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { FormSchema } from "@/schemas/form";
+import { useMemo } from "react";
 
 const WORK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 export const TimesheetForm = () => {
   const { control, watch } = useFormContext<FormSchema>();
+
+  const monthYearDate = useMemo<Dayjs | null>(() => {
+    if (!watch("monthYear") || !watch("monthYear").isValid()) {
+      return null;
+    }
+
+    return watch("monthYear");
+  }, [watch("monthYear")]);
 
   const {
     fields: eventFields,
@@ -197,6 +206,8 @@ export const TimesheetForm = () => {
                       {...field}
                       value={field.value ? field.value.toDate() : null}
                       onChange={(date) => field.onChange(date ? dayjs(date) : null)}
+                      minDate={monthYearDate ? monthYearDate.startOf("month").toDate() : undefined}
+                      maxDate={monthYearDate ? monthYearDate.endOf("month").toDate() : undefined}
                       slotProps={{
                         textField: { size: "small", error: !!error, helperText: error?.message },
                       }}
