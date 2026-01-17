@@ -122,14 +122,14 @@ const drawCell = (
  * @param data - The form data used to generate the timesheet PDF
  * @returns A data URL string representing the generated PDF
  */
-export const generateTimesheetPDF = (data: FormSchema): string => {
+export const generateTimesheetPDF = ({ monthYear, employees, workDays, events }: FormSchema): string => {
   const doc = new jsPDF({
     orientation: "p",
     unit: "mm",
     format: "letter",
   });
 
-  const monthLabel = data.monthYear.format("MMMM, YYYY");
+  const monthLabel = monthYear.format("MMMM, YYYY");
   const width = doc.internal.pageSize.getWidth() - 20;
   const colWidth = width / 6;
   const headerHeights = {
@@ -147,17 +147,20 @@ export const generateTimesheetPDF = (data: FormSchema): string => {
     keywords: `PDF, Confidential, Employee Timesheet, ${process.env.NEXT_PUBLIC_APP_NAME} for ${process.env.NEXT_PUBLIC_COMPANY_NAME}`,
   });
 
-  const weeks = buildWeeks(data.monthYear, data.workDays, data.events);
-  data.employees.forEach((employee, employeeIndex) => {
+  const weeks = buildWeeks(monthYear, workDays, events);
+  employees.forEach(({ fullName }, employeeIndex) => {
     if (employeeIndex > 0) {
       doc.addPage("letter", "p");
+    }
+    if (employees.length > 1) {
+      doc.outline.add(null, fullName, { pageNumber: employeeIndex + 1 });
     }
 
     let y = 10 + headerHeights.title;
 
-    doc.setLineWidth(0.3);
-
+    
     // Header
+    doc.setLineWidth(0.3);
     doc.setFont("Helvetica", "bold");
     doc.setFontSize(15);
     doc.text(process.env.NEXT_PUBLIC_COMPANY_NAME || "", 10, y);
@@ -172,7 +175,7 @@ export const generateTimesheetPDF = (data: FormSchema): string => {
     // Employee and Period Info
     doc.setFont("Helvetica", "normal");
     doc.setFontSize(10);
-    drawCell(doc, 10, y, colWidth * 4.2, headerHeights.meta, `Employee: ${employee.fullName}`, {
+    drawCell(doc, 10, y, colWidth * 4.2, headerHeights.meta, `Employee: ${fullName}`, {
       align: "L",
     });
     drawCell(
@@ -213,8 +216,8 @@ export const generateTimesheetPDF = (data: FormSchema): string => {
     doc.setFont("Helvetica");
     doc.setFontSize(9);
 
-    weeks.forEach((week) => {
-      week.days.forEach(({ date, weekDay, description, isBillable }) => {
+    weeks.forEach(({ days }) => {
+      days.forEach(({ date, weekDay, description, isBillable }) => {
         x = 10;
         drawCell(
           doc,
