@@ -10,7 +10,16 @@ const roboto = Roboto({
 });
 
 const theme = createTheme({
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: {
+    light: {
+      palette: {
+        background: {
+          default: "#f4f7fa",
+        },
+      },
+    },
+    dark: true,
+  },
   cssVariables: {
     colorSchemeSelector: "class",
   },

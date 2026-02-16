@@ -16,19 +16,29 @@ const StyledIframe = styled("iframe")(({ theme }) => ({
   boxShadow: theme.shadows[3],
 }));
 
-const StyledPlaceholder = styled("div")(({ theme }) => ({
-  ...BaseStyling,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: theme.palette.grey[900],
-  boxShadow: theme.shadows[3],
-}));
+const StyledPlaceholder = styled("div")(({ theme }) => [
+  {
+    ...BaseStyling,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: theme.shadows[3],
+    backgroundColor: theme.palette.grey[300],
+  },
+  theme.applyStyles("dark", {
+    backgroundColor: theme.palette.grey[900],
+  }),
+]);
 
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  color: theme.palette.getContrastText(theme.palette.grey[900]),
-  userSelect: "none",
-}));
+const StyledTypography = styled(Typography)(({ theme }) => [
+  {
+    color: theme.palette.text.secondary,
+    userSelect: "none",
+  },
+  theme.applyStyles("dark", {
+    color: theme.palette.getContrastText(theme.palette.grey[900]),
+  }),
+]);
 
 type IframeProps = {
   src: string | null;
@@ -43,7 +53,7 @@ export const IframeWrapper = ({ src, ...props }: IframeProps) => {
   if (!src) {
     return (
       <StyledPlaceholder data-testid="iframe-placeholder">
-        <StyledTypography variant="body1">No content available</StyledTypography>
+        <StyledTypography variant="body2">No content available</StyledTypography>
       </StyledPlaceholder>
     );
   }

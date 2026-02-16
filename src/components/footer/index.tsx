@@ -3,19 +3,32 @@
 import { styled, Typography } from "@mui/material";
 import Link from "next/link";
 
-const StyledFooter = styled("footer")(({ theme }) => ({
-  padding: theme.spacing(2, 0),
-  marginTop: "auto",
-  backgroundColor: theme.palette.grey[900],
-  textAlign: "center",
-}));
-
-const StyledTypography = styled(Typography)(({ theme }) => ({
-  color: theme.palette.getContrastText(theme.palette.grey[900]),
-  "& a": {
-    color: "inherit",
+const StyledFooter = styled("footer")(({ theme }) => [
+  {
+    padding: theme.spacing(2, 0),
+    marginTop: "auto",
+    textAlign: "center",
+    borderTop: "1px solid",
+    backgroundColor: theme.palette.grey[300],
+    borderTopColor: theme.palette.divider,
   },
-}));
+  theme.applyStyles("dark", {
+    backgroundColor: theme.palette.grey[900],
+    borderTopColor: "transparent",
+  }),
+]);
+
+const StyledTypography = styled(Typography)(({ theme }) => [
+  {
+    color: theme.palette.text.primary,
+    "& a": {
+      color: "inherit",
+    },
+  },
+  theme.applyStyles("dark", {
+    color: theme.palette.getContrastText(theme.palette.grey[900]),
+  }),
+]);
 
 export const Footer = () => (
   <StyledFooter data-testid="page-footer">
