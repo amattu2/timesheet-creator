@@ -41,7 +41,6 @@ const Page = () => {
     resolver: zodResolver(FORM_SCHEMA),
     defaultValues: {
       ...DefaultForm,
-      ...CachedForm,
     },
   });
 
