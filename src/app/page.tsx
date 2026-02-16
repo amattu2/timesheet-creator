@@ -7,7 +7,7 @@ import { generateTimesheetPDF } from "@/utils/pdf";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Grid } from "@mui/material";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -32,16 +32,25 @@ const CachedForm: Pick<FormSchema, "workDays" | "employees"> = {
 };
 
 const Page = () => {
-  const [prevForm, setPrevForm] = useLocalStorage<typeof CachedForm>("previous-form", CachedForm);
+  const [prevForm, setPrevForm] = useLocalStorage<typeof CachedForm>("previous-form", CachedForm, {
+    initializeWithValue: false,
+  });
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   const methods = useForm<FormSchema>({
     resolver: zodResolver(FORM_SCHEMA),
     defaultValues: {
       ...DefaultForm,
-      ...prevForm,
+      ...CachedForm,
     },
   });
+
+  useEffect(() => {
+    methods.reset({
+      ...methods.getValues(),
+      ...prevForm,
+    });
+  }, [methods, prevForm]);
 
   const onSubmit = (data: FormSchema) => {
     const pdfDataUrl = generateTimesheetPDF(data);
