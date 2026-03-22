@@ -120,14 +120,14 @@ const drawCell = (
  * A utility function to generate a timesheet PDF from the provided form data.
  *
  * @param data - The form data used to generate the timesheet PDF
- * @returns A data URL string representing the generated PDF
+ * @returns A Blob representing the generated PDF
  */
 export const generateTimesheetPDF = ({
   monthYear,
   employees,
   workDays,
   events,
-}: FormSchema): string => {
+}: FormSchema): Readonly<Blob> => {
   const doc = new jsPDF({
     orientation: "p",
     unit: "mm",
@@ -292,5 +292,5 @@ export const generateTimesheetPDF = ({
     );
   });
 
-  return doc.output("datauristring");
+  return doc.output("blob");
 };

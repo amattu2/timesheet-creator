@@ -35,7 +35,7 @@ const Page = () => {
   const [prevForm, setPrevForm] = useLocalStorage<typeof CachedForm>("previous-form", CachedForm, {
     initializeWithValue: false,
   });
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [objectUrl, setObjectUrl] = useState<string | null>(null);
 
   const methods = useForm<FormSchema>({
     resolver: zodResolver(FORM_SCHEMA),
@@ -44,21 +44,30 @@ const Page = () => {
     },
   });
 
-  useEffect(() => {
+  const onSubmit = (data: FormSchema) => {
+    setObjectUrl(URL.createObjectURL(generateTimesheetPDF(data)));
+    setPrevForm({
+      workDays: data.workDays,
+      employees: data.employees,
+    });
+  };
+
+   useEffect(() => {
     methods.reset({
       ...methods.getValues(),
       ...prevForm,
     });
   }, [methods, prevForm]);
 
-  const onSubmit = (data: FormSchema) => {
-    const pdfDataUrl = generateTimesheetPDF(data);
-    setPdfUrl(pdfDataUrl);
-    setPrevForm({
-      workDays: data.workDays,
-      employees: data.employees,
-    });
-  };
+  useEffect(() => {
+    return () => {
+      if (!objectUrl) {
+        return;
+      }
+
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [objectUrl]);
 
   return (
     <Grid container>
@@ -70,7 +79,7 @@ const Page = () => {
         </FormProvider>
       </Grid>
       <Grid size={{ lg: 6, xs: 12 }}>
-        <IframeWrapper src={pdfUrl} />
+        <IframeWrapper src={objectUrl} />
       </Grid>
     </Grid>
   );
