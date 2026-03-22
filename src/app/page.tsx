@@ -44,24 +44,30 @@ const Page = () => {
     },
   });
 
-  useEffect(() => {
-    methods.reset({
-      ...methods.getValues(),
-      ...prevForm,
-    });
-  }, [methods, prevForm]);
-
   const onSubmit = (data: FormSchema) => {
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl);
-    }
-
     setObjectUrl(URL.createObjectURL(generateTimesheetPDF(data)));
     setPrevForm({
       workDays: data.workDays,
       employees: data.employees,
     });
   };
+
+   useEffect(() => {
+    methods.reset({
+      ...methods.getValues(),
+      ...prevForm,
+    });
+  }, [methods, prevForm]);
+
+  useEffect(() => {
+    return () => {
+      if (!objectUrl) {
+        return;
+      }
+
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [objectUrl]);
 
   return (
     <Grid container>

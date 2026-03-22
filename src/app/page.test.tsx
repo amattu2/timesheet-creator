@@ -119,4 +119,18 @@ describe("Page", () => {
     expect(mockSetPrevForm).toHaveBeenCalledWith(storedForm);
     expect(mockGenerateTimesheetPDF).toHaveBeenCalledTimes(1);
   });
+
+  it("should revoke the current object URL on unmount", async () => {
+    const { unmount } = render(<Page />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Generate PDF" }));
+    await waitFor(() => {
+      expect(createObjectURLSpy).toHaveBeenCalledTimes(1);
+    });
+
+    unmount();
+
+    expect(revokeObjectURLSpy).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:first");
+  });
 });
