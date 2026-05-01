@@ -1,5 +1,5 @@
 import { FormSchema } from "@/schemas/form";
-import jsPDF from "jspdf";
+import jsPDF, { AcroFormTextField } from "jspdf";
 import dayjs, { Dayjs } from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 
@@ -93,6 +93,7 @@ const drawCell = (
     fill?: boolean;
     border?: boolean;
     fontStyle?: "normal" | "bold" | "italic";
+    textField?: string;
   }
 ) => {
   if (options?.fill) {
@@ -113,7 +114,25 @@ const drawCell = (
     doc.setFont("Helvetica", "normal");
   }
 
-  doc.text(text, offsetX, y - h / 2 + 2, { align: textAlign });
+  if (options?.textField) {
+    const field = new AcroFormTextField();
+    field.x = x;
+    field.y = y - h;
+    field.width = w;
+    field.height = h;
+    field.fieldName = options.textField;
+    field.value = text;
+    field.defaultValue = text;
+    field.fontName = "Helvetica";
+    field.fontStyle = "normal";
+    field.fontSize = doc.getFontSize();
+    field.textAlign = textAlign;
+    field.multiline = false;
+
+    doc.addField(field);
+  } else {
+    doc.text(text, offsetX, y - h / 2 + 2, { align: textAlign });
+  }
 };
 
 /**
@@ -251,21 +270,25 @@ export const generateTimesheetPDF = ({
             align: "L",
             fontStyle: "italic",
             fill: !isBillable,
+            textField: isBillable ? `desc_${employeeIndex}_${date.format("YYYYMMDD")}` : undefined,
           }
         );
         x += headers[2].width;
 
         drawCell(doc, x, y + headerHeights.row, headers[3].width, headerHeights.row, "", {
           fill: !isBillable,
+          textField: isBillable ? `timein_${employeeIndex}_${date.format("YYYYMMDD")}` : undefined,
         });
         x += headers[3].width;
 
         drawCell(doc, x, y + headerHeights.row, headers[4].width, headerHeights.row, "", {
           fill: !isBillable,
+          textField: isBillable ? `timeout_${employeeIndex}_${date.format("YYYYMMDD")}` : undefined,
         });
         x += headers[4].width;
         drawCell(doc, x, y + headerHeights.row, headers[5].width, headerHeights.row, "", {
           fill: !isBillable,
+          textField: isBillable ? `net_${employeeIndex}_${date.format("YYYYMMDD")}` : undefined,
         });
 
         y += headerHeights.row;
