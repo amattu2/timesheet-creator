@@ -52,7 +52,7 @@ const Page = () => {
     });
   };
 
-   useEffect(() => {
+  useEffect(() => {
     methods.reset({
       ...methods.getValues(),
       ...prevForm,
