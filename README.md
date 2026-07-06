@@ -16,6 +16,8 @@ Natively supports the following features:
 - Single-tenant deployment with branding customization
 - ... and More
 
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/amattu2/timesheet-creator)
+
 # Getting Started
 
 Clone the repository locally, e.g.
