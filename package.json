@@ -36,12 +36,12 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
-    "@types/node": "^20",
+    "@types/node": "^22.20.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^5.2.0",
-    "@vitest/coverage-v8": "^4.1.8",
-    "@vitest/expect": "^4.0.16",
+    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/expect": "^5.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
     "eslint-config-prettier": "^10.1.8",
@@ -49,6 +49,6 @@
     "prettier": "^3.7.4",
     "typescript": "^5",
     "vite-tsconfig-paths": "^6.0.3",
-    "vitest": "^4.1.8"
+    "vitest": "^5.0.3"
   }
 }
